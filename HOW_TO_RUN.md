@@ -30,10 +30,10 @@
 
 # 端末を使う場合
 
-mvnコマンド(Maven)が入っている状態で、
-
 ```sh
-$ mvn compile # コンパイル
+$ ./mvnw compile # コンパイル
 
-$ mvn package # fat jarの作成
+$ ./mvnw package # fat jarの作成
 ```
+
+> 初回実行時に[Maven Wrapper](https://github.com/takari/maven-wrapper)によりMaven 3のダウンロードが行われます。
