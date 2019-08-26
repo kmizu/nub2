@@ -6,6 +6,7 @@ public class AstNode {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
+        E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
         E visitPrintExpression(PrintExpression node);
@@ -222,11 +223,11 @@ public class AstNode {
     public static class StringLiteral extends Expression {
         private final String value;
         public StringLiteral(String value) { this.value = value; }
-        public String value() { return value.substring(1, value.length() - 1); }
+        public String value() { return value; }
 
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
-            throw new RuntimeException("not implemented");
+            return visitor.visitStringLiteral(this);
         }
     }
 
