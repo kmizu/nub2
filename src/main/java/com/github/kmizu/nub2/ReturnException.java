@@ -1,4 +1,4 @@
-package com.github.kmizu.nub;
+package com.github.kmizu.nub2;
 
 public class ReturnException extends RuntimeException {
     private final Object value;

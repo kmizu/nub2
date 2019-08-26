@@ -5,10 +5,10 @@
 このレポジトリは[プログラミング言語作成ハンズオン](https://connpass.com/event/144535/)向けのレポジトリです。
 Nubとは英語で**小さな塊や隆起**を意味する言葉です。Nub-v2のインタプリタはJavaを使って書かれています。
 
-Nub2のコンパイルにはMaven 3が必要です。
-
 * `src/main/java/...`: Javaソースコード
 * `pom.xml`: Maven用コンフィグ
+
+> Nub2のコンパイルにはMaven 3を利用していますが、[Maven Wrapper](https://github.com/takari/maven-wrapper)を含んでいるので別途インストールする必要はありません。
 
 ## 開発者向けドキュメント
 
