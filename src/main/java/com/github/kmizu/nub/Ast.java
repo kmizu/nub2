@@ -2,7 +2,7 @@ package com.github.kmizu.nub;
 
 import java.util.List;
 
-public class AstNode {
+public class Ast {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
         E visitNumber(Number node);
@@ -19,21 +19,23 @@ public class AstNode {
         E visitFunctionCall(FunctionCall node);
     }
 
-    public static abstract class Expression extends AstNode {
+    public static abstract class Node {}
+
+    public static abstract class Expression extends Node {
         public abstract <E> E accept(ExpressionVisitor<E> visitor);
     }
 
     public static class FunctionCall extends Expression {
-        private final AstNode.Identifier       name;
-        private final List<AstNode.Expression> params;
-        public FunctionCall(AstNode.Identifier name, List<AstNode.Expression> params) {
+        private final Ast.Identifier       name;
+        private final List<Ast.Expression> params;
+        public FunctionCall(Ast.Identifier name, List<Ast.Expression> params) {
             this.name = name;
             this.params = params;
         }
-        public AstNode.Identifier name() {
+        public Ast.Identifier name() {
             return name;
         }
-        public List<AstNode.Expression> params() {
+        public List<Ast.Expression> params() {
             return params;
         }
 
@@ -43,8 +45,8 @@ public class AstNode {
     public static class DefFunction extends Expression {
         private final String                   name;
         private final List<String>             args;
-        private final List<AstNode.Expression> body;
-        public DefFunction(String name, List<String> args, List<AstNode.Expression> body) {
+        private final List<Ast.Expression> body;
+        public DefFunction(String name, List<String> args, List<Ast.Expression> body) {
             this.name = name;
             this.args = args;
             this.body = body;
@@ -55,7 +57,7 @@ public class AstNode {
         public List<String> args() {
             return args;
         }
-        public List<AstNode.Expression> body() {
+        public List<Ast.Expression> body() {
             return body;
         }
 
@@ -64,15 +66,15 @@ public class AstNode {
 
     public static class LetExpression extends Expression {
         private final String variableName;
-        private final AstNode.Expression expression;
-        public LetExpression(String variableName, AstNode.Expression expression) {
+        private final Ast.Expression expression;
+        public LetExpression(String variableName, Ast.Expression expression) {
             this.variableName = variableName;
             this.expression = expression;
         }
         public String variableName() {
             return variableName;
         }
-        public AstNode.Expression expression() {
+        public Ast.Expression expression() {
             return expression;
         }
 
@@ -81,15 +83,15 @@ public class AstNode {
 
     public static class AssignmentOperation extends Expression {
         private final String variableName;
-        private final AstNode.Expression expression;
-        public AssignmentOperation(String variableName, AstNode.Expression expression) {
+        private final Ast.Expression expression;
+        public AssignmentOperation(String variableName, Ast.Expression expression) {
             this.variableName = variableName;
             this.expression = expression;
         }
         public String variableName() {
             return variableName;
         }
-        public AstNode.Expression expression() {
+        public Ast.Expression expression() {
             return expression;
         }
 
@@ -97,26 +99,26 @@ public class AstNode {
     }
 
     public static class IfExpression extends Expression {
-        private final AstNode.Expression condition;
-        private final List<AstNode.Expression> thenClause, elseClause;
+        private final Ast.Expression condition;
+        private final List<Ast.Expression> thenClause, elseClause;
         public IfExpression(
-            AstNode.Expression condition,
-            List<AstNode.Expression> thenClause,
-            List<AstNode.Expression> elseClause) {
+            Ast.Expression condition,
+            List<Ast.Expression> thenClause,
+            List<Ast.Expression> elseClause) {
             this.condition = condition;
             this.thenClause = thenClause;
             this.elseClause = elseClause;
         }
 
-        public AstNode.Expression condition() {
+        public Ast.Expression condition() {
             return condition;
         }
 
-        public List<AstNode.Expression> thenClause() {
+        public List<Ast.Expression> thenClause() {
             return thenClause;
         }
 
-        public List<AstNode.Expression> elseClause() {
+        public List<Ast.Expression> elseClause() {
             return elseClause;
         }
 
@@ -127,18 +129,18 @@ public class AstNode {
     }
 
     public static class WhileExpression extends Expression {
-        private final AstNode.Expression condition;
-        private final List<AstNode.Expression> body;
-        public WhileExpression(AstNode.Expression condition, List<AstNode.Expression> body) {
+        private final Ast.Expression condition;
+        private final List<Ast.Expression> body;
+        public WhileExpression(Ast.Expression condition, List<Ast.Expression> body) {
             this.condition = condition;
             this.body = body;
         }
 
-        public AstNode.Expression condition() {
+        public Ast.Expression condition() {
             return condition;
         }
 
-        public List<AstNode.Expression> body() {
+        public List<Ast.Expression> body() {
             return body;
         }
 
@@ -149,11 +151,11 @@ public class AstNode {
     }
 
     public static class PrintExpression extends Expression {
-        private final AstNode.Expression target;
-        public PrintExpression(AstNode.Expression target) {
+        private final Ast.Expression target;
+        public PrintExpression(Ast.Expression target) {
             this.target = target;
         }
-        public AstNode.Expression target() {
+        public Ast.Expression target() {
             return target;
         }
 
@@ -164,11 +166,11 @@ public class AstNode {
     }
 
     public static class PrintlnExpression extends Expression {
-        private final AstNode.Expression target;
-        public PrintlnExpression(AstNode.Expression target) {
+        private final Ast.Expression target;
+        public PrintlnExpression(Ast.Expression target) {
             this.target = target;
         }
-        public AstNode.Expression target() {
+        public Ast.Expression target() {
             return target;
         }
 

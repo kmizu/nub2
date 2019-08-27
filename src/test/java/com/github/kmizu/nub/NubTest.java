@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
-import static com.github.kmizu.nub.AstNode.*;
+import static com.github.kmizu.nub.Ast.*;
 
 @RunWith(JUnit4.class)
 public class NubTest {

@@ -1,9 +1,8 @@
 package com.github.kmizu.nub;
 
 import java.util.Arrays;
-import java.util.List;
 
-import static com.github.kmizu.nub.AstNode.*;
+import static com.github.kmizu.nub.Ast.*;
 
 public class Main {
     public static void main(String[] args) {
