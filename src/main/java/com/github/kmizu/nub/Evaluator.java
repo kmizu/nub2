@@ -92,7 +92,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Integer visitNumber(Ast.Number node) {
+    public Integer visitNumber(Ast.IntLiteral node) {
         return node.value();
     }
 

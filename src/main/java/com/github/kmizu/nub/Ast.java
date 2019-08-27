@@ -1,11 +1,12 @@
 package com.github.kmizu.nub;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Ast {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
-        E visitNumber(Number node);
+        E visitNumber(IntLiteral node);
         E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
@@ -210,9 +211,9 @@ public class Ast {
         }
     }
 
-    public static class Number extends Expression {
+    public static class IntLiteral extends Expression {
         private final int value;
-        public Number(int value) {
+        public IntLiteral(int value) {
             this.value = value;
         }
         public int value() { return value; }
@@ -243,6 +244,58 @@ public class Ast {
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitIdentifier(this);
+        }
+    }
+
+    public static class T {
+        public static DefFunction makeFunctionDefinition(String functionName, List<String> args, Expression... body) {
+            return new DefFunction(functionName, args, Arrays.asList(body));
+        }
+
+        public static FunctionCall makeCall(Identifier functionName, Expression... parameters) {
+            return new FunctionCall(functionName, Arrays.asList(parameters));
+        }
+
+        public static AssignmentOperation makeAssignment(String varialeName, Expression expression) {
+            return new AssignmentOperation(varialeName, expression);
+        }
+
+        public static LetExpression makeLet(String variableName, Expression expression) {
+            return new LetExpression(variableName, expression);
+        }
+
+        public static IfExpression makeIf(Expression condition, Expression thenClause, Expression elseClause) {
+            return new IfExpression(condition, Arrays.asList(thenClause), Arrays.asList(elseClause));
+        }
+        public static BinaryOperation makeBinaryOperation(
+                String op, Expression lhs, Expression rhs
+        ) {
+            return new BinaryOperation(op, lhs, rhs);
+        }
+
+        public static WhileExpression makeWhile(
+                Expression condition, Expression... body
+        ) {
+            return new WhileExpression(condition, Arrays.asList(body));
+        }
+
+        public static ExpressionList makeBlock(Expression... elements) {
+            return new ExpressionList(Arrays.asList(elements));
+        }
+        public static Identifier makeId(String name) {
+            return new Identifier(name);
+        }
+        public static StringLiteral makeString(String value) {
+            return new StringLiteral(value);
+        }
+        public static IntLiteral makeNumber(int value) {
+            return new IntLiteral(value);
+        }
+        public static PrintlnExpression makePrintln(Expression parameter) {
+            return new PrintlnExpression(parameter);
+        }
+        public static PrintExpression makePrint(Expression parameter) {
+            return new PrintExpression(parameter);
         }
     }
 }
