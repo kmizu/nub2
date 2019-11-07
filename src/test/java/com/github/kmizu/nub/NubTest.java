@@ -106,4 +106,19 @@ public class NubTest {
                 )
         );
     }
+
+    @Test
+    public void testIf() {
+        assertEquals(
+                "1 < 2",
+                eval(
+                        new IfExpression(
+                                new BinaryOperation("<", new IntLiteral(1), new IntLiteral(2)),
+                                Arrays.asList(new StringLiteral("1 < 2")),
+                                Arrays.asList(new StringLiteral("1 >= 2"))
+                        )
+                )
+        );
+    }
 }
+
