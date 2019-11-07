@@ -138,7 +138,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitExpressionList(Ast.ExpressionList node) {
+    public Object visitExpressionList(Ast.Block node) {
         Object last = 0;
         for (Ast.Expression e : node.expressions()) {
             last = e.accept(this);
@@ -187,7 +187,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
             return ret;
     }
 
-    public Object evaluate(Ast.ExpressionList program) {
+    public Object evaluate(Ast.Block program) {
         for(Ast.Expression top:program.expressions()) {
             if(top instanceof Ast.DefFunction) {
                 Ast.DefFunction f = (Ast.DefFunction)top;

@@ -13,7 +13,7 @@ import static com.github.kmizu.nub.Ast.*;
 public class NubTest {
     private static Object eval(Expression input) {
         return new Evaluator().evaluate(
-                new ExpressionList(
+                new Block(
                         Arrays.asList(input)
                 )
         );
@@ -68,7 +68,7 @@ public class NubTest {
     public void testLet() {
         assertEquals(
                 10,
-                eval(new ExpressionList(
+                eval(new Block(
                         new LetExpression("x", new IntLiteral(10)),
                         new Identifier("x")
                 ))
@@ -79,7 +79,7 @@ public class NubTest {
     public void testAssignment() {
         assertEquals(
                 20,
-                eval(new ExpressionList(
+                eval(new Block(
                         new LetExpression("x", new IntLiteral(10)),
                         new AssignmentOperation("x", new IntLiteral(20)),
                         new Identifier("x")
@@ -92,7 +92,7 @@ public class NubTest {
         assertEquals(
                 10,
                 eval(
-                        new ExpressionList(
+                        new Block(
                                 new LetExpression("x", new IntLiteral(0)),
                                 new WhileExpression(
                                         new BinaryOperation("<", new Identifier("x"), new IntLiteral(10)),

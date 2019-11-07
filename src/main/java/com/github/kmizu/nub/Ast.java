@@ -11,7 +11,7 @@ public class Ast {
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
         E visitPrintExpression(PrintExpression node);
-        E visitExpressionList(ExpressionList node);
+        E visitExpressionList(Block node);
         E visitIfExpression(IfExpression node);
         E visitWhileExpression(WhileExpression node);
         E visitAssignmentOperation(AssignmentOperation node);
@@ -183,12 +183,12 @@ public class Ast {
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitPrintlnExpression(this); }
     }
 
-    public static class ExpressionList extends Expression {
+    public static class Block extends Expression {
         private final List<Expression> expressions;
-        public ExpressionList(List<Expression> expressions) {
+        public Block(List<Expression> expressions) {
             this.expressions = expressions;
         }
-        public ExpressionList(Expression... expressions) {
+        public Block(Expression... expressions) {
             this.expressions = Arrays.asList(expressions);
         }
         public List<Expression> expressions() {
@@ -286,8 +286,8 @@ public class Ast {
             return new WhileExpression(condition, Arrays.asList(body));
         }
 
-        public static ExpressionList makeBlock(Expression... elements) {
-            return new ExpressionList(Arrays.asList(elements));
+        public static Block makeBlock(Expression... elements) {
+            return new Block(Arrays.asList(elements));
         }
         public static Identifier makeId(String name) {
             return new Identifier(name);
