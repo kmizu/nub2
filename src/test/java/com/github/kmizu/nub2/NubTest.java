@@ -1,4 +1,4 @@
-package com.github.kmizu.nub;
+package com.github.kmizu.nub2;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
-import static com.github.kmizu.nub.Ast.*;
+import static com.github.kmizu.nub2.Ast.*;
 
 @RunWith(JUnit4.class)
 public class NubTest {

@@ -1,8 +1,8 @@
-package com.github.kmizu.nub;
+package com.github.kmizu.nub2;
 
 import java.util.Arrays;
 
-import static com.github.kmizu.nub.Ast.*;
+import static com.github.kmizu.nub2.Ast.*;
 
 public class Main {
     public static void main(String[] args) {

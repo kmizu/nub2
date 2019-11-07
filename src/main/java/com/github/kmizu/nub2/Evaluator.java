@@ -1,4 +1,4 @@
-package com.github.kmizu.nub;
+package com.github.kmizu.nub2;
 
 import java.util.*;
 
