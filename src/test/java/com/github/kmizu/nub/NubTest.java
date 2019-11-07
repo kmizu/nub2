@@ -63,4 +63,27 @@ public class NubTest {
                 eval(new BinaryOperation("/", new IntLiteral(6), new IntLiteral(2)))
         );
     }
+
+    @Test
+    public void testLet() {
+        assertEquals(
+                10,
+                eval(new ExpressionList(
+                        new LetExpression("x", new IntLiteral(10)),
+                        new Identifier("x")
+                ))
+        );
+    }
+
+    @Test
+    public void testAssignment() {
+        assertEquals(
+                20,
+                eval(new ExpressionList(
+                        new LetExpression("x", new IntLiteral(10)),
+                        new AssignmentOperation("x", new IntLiteral(20)),
+                        new Identifier("x")
+                ))
+        );
+    }
 }

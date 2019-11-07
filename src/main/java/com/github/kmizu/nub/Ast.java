@@ -184,6 +184,9 @@ public class Ast {
         public ExpressionList(List<Expression> expressions) {
             this.expressions = expressions;
         }
+        public ExpressionList(Expression... expressions) {
+            this.expressions = Arrays.asList(expressions);
+        }
         public List<Expression> expressions() {
             return expressions;
         }
