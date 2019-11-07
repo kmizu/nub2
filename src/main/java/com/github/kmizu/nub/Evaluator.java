@@ -78,14 +78,10 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
                 return (node.lhs().accept(this).equals(node.rhs().accept(this))) ? 1 : 0;
             case "!=":
                 return (!(node.lhs().accept(this).equals(node.rhs().accept(this)))) ? 1 : 0;
-            case "&&": {
-                Integer value1 = asInt(node.lhs().accept(this));
-                return value1.equals(0) ? 0 : node.rhs().accept(this);
-            }
-            case "||": {
-                Integer value1 = asInt(node.lhs().accept(this));
-                return (!value1.equals(0)) ? value1 : node.rhs().accept(this);
-            }
+            case "&&":
+                throw new UnimplementedException("logical and operator &&");
+            case "||":
+                throw new UnimplementedException("logical or operator ||");
             default:
                 throw new RuntimeException("cannot reach here");
         }
@@ -113,21 +109,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     @Override
     public Object visitAssignmentOperation(Ast.AssignmentOperation node) {
-        Object value = node.expression().accept(this);
-        Optional<Environment> found = environment.findEnvironment(node.variableName());
-        if(!found.isPresent()) {
-            throw new NubRuntimeException("variable " + node.variableName() + " is not defined");
-        } else {
-            found.get().register(node.variableName(), value);
-        }
-        return value;
-    }
-
-    @Override
-    public Object visitPrintExpression(Ast.PrintExpression node) {
-        Object value = node.target().accept(this);
-        System.out.print(value);
-        return value;
+        throw new UnimplementedException("assignment");
     }
 
     @Override
@@ -148,29 +130,12 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     @Override
     public Object visitWhileExpression(Ast.WhileExpression node) {
-        Object last = 0;
-        while(asInt(node.condition().accept(this)) != 0) {
-            for(Ast.Expression e:node.body()) {
-                last = e.accept(this);
-            }
-        }
-        return last;
+        throw new UnimplementedException("while expression");
     }
 
     @Override
     public Object visitIfExpression(Ast.IfExpression node) {
-        Integer condition = asInt(node.condition().accept(this));
-        Object last = 0;
-        if (condition != 0) {
-            for (Ast.Expression e : node.thenClause()) {
-                last = e.accept(this);
-            }
-        } else {
-            for (Ast.Expression e : node.elseClause()) {
-                last = e.accept(this);
-            }
-        }
-        return last;
+        throw new UnimplementedException("if expression");
     }
 
     @Override
@@ -199,31 +164,6 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     @Override
     public Object visitFunctionCall(Ast.FunctionCall node) {
-        Ast.DefFunction function = functions.get(node.name().name());
-        if(function == null) {
-            throw new NubRuntimeException("function " + node.name().name() + " is not defined");
-        }
-        List<String> args = function.args();
-        if(args.size() != node.params().size()) {
-            throw new NubRuntimeException("function " + node.name().name() + " arity mismatch! required length: " + args.size() + " actual length:" + node.params().size());
-        }
-        {
-            Environment prevEnvironment = environment;
-            List<Object> values = new ArrayList<>();
-            //params must be evaluated before switching environment
-            for(Ast.Expression e:node.params()) {
-                values.add(e.accept(this));
-            }
-            environment = new Environment(globalEnvironment);
-            for (int i = 0; i < args.size(); i++) {
-                environment.register(args.get(i), values.get(i));
-            }
-            Object last = null;
-            for (Ast.Expression e : function.body()) {
-               last = e.accept(this);
-            }
-            environment = prevEnvironment;
-            return last;
-        }
+        throw new UnimplementedException("function call");
     }
 }

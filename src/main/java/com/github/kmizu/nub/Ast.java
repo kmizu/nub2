@@ -10,7 +10,6 @@ public class Ast {
         E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
-        E visitPrintExpression(PrintExpression node);
         E visitExpressionList(Block node);
         E visitIfExpression(IfExpression node);
         E visitWhileExpression(WhileExpression node);
@@ -155,21 +154,6 @@ public class Ast {
         }
     }
 
-    public static class PrintExpression extends Expression {
-        private final Ast.Expression target;
-        public PrintExpression(Ast.Expression target) {
-            this.target = target;
-        }
-        public Ast.Expression target() {
-            return target;
-        }
-
-        @Override
-        public <E> E accept(ExpressionVisitor<E> visitor) {
-            return visitor.visitPrintExpression(this);
-        }
-    }
-
     public static class PrintlnExpression extends Expression {
         private final Ast.Expression target;
         public PrintlnExpression(Ast.Expression target) {
@@ -300,9 +284,6 @@ public class Ast {
         }
         public static PrintlnExpression makePrintln(Expression parameter) {
             return new PrintlnExpression(parameter);
-        }
-        public static PrintExpression makePrint(Expression parameter) {
-            return new PrintExpression(parameter);
         }
     }
 }
