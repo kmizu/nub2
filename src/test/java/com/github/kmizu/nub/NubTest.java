@@ -86,4 +86,24 @@ public class NubTest {
                 ))
         );
     }
+
+    @Test
+    public void testWhile() {
+        assertEquals(
+                10,
+                eval(
+                        new ExpressionList(
+                                new LetExpression("x", new IntLiteral(0)),
+                                new WhileExpression(
+                                        new BinaryOperation("<", new Identifier("x"), new IntLiteral(10)),
+                                        new AssignmentOperation(
+                                                "x",
+                                                new BinaryOperation("+", new Identifier("x"), new IntLiteral(1))
+                                        )
+                                ),
+                                new Identifier("x")
+                        )
+                )
+        );
+    }
 }

@@ -136,6 +136,10 @@ public class Ast {
             this.condition = condition;
             this.body = body;
         }
+        public WhileExpression(Ast.Expression condition, Ast.Expression... body) {
+            this.condition = condition;
+            this.body = Arrays.asList(body);
+        }
 
         public Ast.Expression condition() {
             return condition;
