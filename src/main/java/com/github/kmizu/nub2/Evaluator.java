@@ -51,37 +51,37 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     public Object visitBinaryExpression(Ast.BinaryExpression node) {
-        switch (node.operator()) {
+        switch (node.operator) {
             case "+":
-                Object lhs = node.lhs().accept(this);
-                Object rhs = node.rhs().accept(this);
+                Object lhs = node.lhs.accept(this);
+                Object rhs = node.rhs.accept(this);
                 if(lhs instanceof String || rhs instanceof String) {
                     return lhs.toString() + rhs.toString();
                 } else {
                     return asInt(lhs) + asInt(rhs);
                 }
             case "-":
-                return asInt(node.lhs().accept(this)) - asInt(node.rhs().accept(this));
+                return asInt(node.lhs.accept(this)) - asInt(node.rhs.accept(this));
             case "*":
-                return asInt(node.lhs().accept(this)) * asInt(node.rhs().accept(this));
+                return asInt(node.lhs.accept(this)) * asInt(node.rhs.accept(this));
             case "/":
-                return asInt(node.lhs().accept(this)) / asInt(node.rhs().accept(this));
+                return asInt(node.lhs.accept(this)) / asInt(node.rhs.accept(this));
             case "<=":
-                return asInt((node.lhs().accept(this))) <= asInt(node.rhs().accept(this)) ? 1 : 0;
+                return asInt((node.lhs.accept(this))) <= asInt(node.rhs.accept(this)) ? 1 : 0;
             case ">=":
-                return (asInt(node.lhs().accept(this)) >= asInt(node.rhs().accept(this))) ? 1 : 0;
+                return (asInt(node.lhs.accept(this)) >= asInt(node.rhs.accept(this))) ? 1 : 0;
             case "<":
-                return (asInt(node.lhs().accept(this)) < asInt(node.rhs().accept(this))) ? 1 : 0;
+                return (asInt(node.lhs.accept(this)) < asInt(node.rhs.accept(this))) ? 1 : 0;
             case ">":
-                return (asInt(node.lhs().accept(this)) > asInt(node.rhs().accept(this))) ? 1 : 0;
+                return (asInt(node.lhs.accept(this)) > asInt(node.rhs.accept(this))) ? 1 : 0;
             case "==":
-                return (node.lhs().accept(this).equals(node.rhs().accept(this))) ? 1 : 0;
+                return (node.lhs.accept(this).equals(node.rhs.accept(this))) ? 1 : 0;
             case "!=":
-                return (!(node.lhs().accept(this).equals(node.rhs().accept(this)))) ? 1 : 0;
+                return (!(node.lhs.accept(this).equals(node.rhs.accept(this)))) ? 1 : 0;
             case "&&":
-                throw new UnimplementedException("logical and operator &&");
+                throw new NotImplementedException("logical and operator &&");
             case "||":
-                throw new UnimplementedException("logical or operator ||");
+                throw new NotImplementedException("logical or operator ||");
             default:
                 throw new RuntimeException("cannot reach here");
         }
@@ -89,32 +89,32 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     @Override
     public Integer visitNumber(Ast.IntLiteral node) {
-        return node.value();
+        return node.value;
     }
 
     @Override
     public String visitStringLiteral(Ast.StringLiteral node) {
-        return node.value();
+        return node.value;
     }
 
     @Override
     public Object visitLetExpression(Ast.LetExpression node) {
-        Object value = node.expression().accept(this);
-        if(environment.contains(node.variableName())) {
-            throw new NubRuntimeException("variable " + node.variableName() + " is already defined");
+        Object value = node.expression.accept(this);
+        if(environment.contains(node.variableName)) {
+            throw new NubRuntimeException("variable " + node.variableName + " is already defined");
         }
-        environment.register(node.variableName(), value);
+        environment.register(node.variableName, value);
         return value;
     }
 
     @Override
     public Object visitAssignmentExpression(Ast.AssignmentExpression node) {
-        throw new UnimplementedException("assignment");
+        throw new NotImplementedException("assignment");
     }
 
     @Override
     public Object visitPrintlnExpression(Ast.PrintlnExpression node) {
-        Object value = node.target().accept(this);
+        Object value = node.target.accept(this);
         System.out.println(value);
         return value;
     }
@@ -122,7 +122,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     @Override
     public Object visitBlock(Ast.Block node) {
         Object last = 0;
-        for (Ast.Expression e : node.expressions()) {
+        for (Ast.Expression e : node.expressions) {
             last = e.accept(this);
         }
         return last;
@@ -130,12 +130,12 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     @Override
     public Object visitWhileExpression(Ast.WhileExpression node) {
-        throw new UnimplementedException("while expression");
+        throw new NotImplementedException("while expression");
     }
 
     @Override
     public Object visitIfExpression(Ast.IfExpression node) {
-        throw new UnimplementedException("if expression");
+        throw new NotImplementedException("if expression");
     }
 
     @Override
@@ -144,16 +144,16 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitIdentifier(Ast.Identifier node) {
-        Object ret = environment.find(node.name());
+    public Object visitId(Ast.Id node) {
+        Object ret = environment.find(node.name);
         if (ret == null)
-            throw new NubRuntimeException(node.name() + " is not defined");
+            throw new NubRuntimeException(node.name + " is not defined");
         else
             return ret;
     }
 
-    public Object evaluate(Ast.Block program) {
-        for(Ast.Expression top:program.expressions()) {
+    public Object eval(Ast.Block program) {
+        for(Ast.Expression top:program.expressions) {
             if(top instanceof Ast.DefFunction) {
                 Ast.DefFunction f = (Ast.DefFunction)top;
                 functions.put(f.name(), f);
@@ -164,6 +164,6 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     @Override
     public Object visitFunctionCall(Ast.FunctionCall node) {
-        throw new UnimplementedException("function call");
+        throw new NotImplementedException("function call");
     }
 }

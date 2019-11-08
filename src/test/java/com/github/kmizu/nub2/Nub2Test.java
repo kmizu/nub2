@@ -4,118 +4,121 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
-
-import java.util.Arrays;
-
+import static com.github.kmizu.nub2.Ast.Factory.*;
 import static com.github.kmizu.nub2.Ast.*;
+
 
 @RunWith(JUnit4.class)
 public class Nub2Test {
     private static Object eval(Expression input) {
-        return new Evaluator().evaluate(
-                new Block(
-                        Arrays.asList(input)
-                )
-        );
+        return new Evaluator().eval(new Block(input));
     }
 
     @Test
     public void testStringLiteral() {
-        assertEquals("Hello, World!", eval(new StringLiteral("Hello, World!")));
+        assertEquals("Hello, World!", eval(tString("Hello, World!")));
     }
 
     @Test
     public void testPrintln() {
         assertEquals(
                 "Hello, World!",
-                eval(new PrintlnExpression(new StringLiteral("Hello, World!")))
+                eval(tPrintln(tString("Hello, World!")))
         );
     }
 
     @Test
-    public void test1Plus1() {
+    public void test1Plus1Is2() {
         assertEquals(
                 2,
-                eval(new BinaryExpression("+", new IntLiteral(1), new IntLiteral(1)))
+                eval(tAdd(tInt(1), tInt(1)))
         );
     }
 
     @Test
-    public void test1Minus1() {
+    public void test1Minus1Is0() {
         assertEquals(
                 0,
-                eval(new BinaryExpression("-", new IntLiteral(1), new IntLiteral(1)))
+                eval(tSubtract(tInt(1), tInt(1)))
         );
     }
 
     @Test
-    public void test2Mul2() {
+    public void test2Mul2Is4() {
         assertEquals(
                 4,
-                eval(new BinaryExpression("*", new IntLiteral(2), new IntLiteral(2)))
+                eval(tMultiply(tInt(2), tInt(2)))
         );
     }
 
     @Test
-    public void test6Div2() {
+    public void test6Div2Is3() {
         assertEquals(
                 3,
-                eval(new BinaryExpression("/", new IntLiteral(6), new IntLiteral(2)))
+                eval(tDivide(tInt(6), tInt(2)))
         );
     }
 
     @Test
-    public void testLet() {
+    public void test1And1Is1() {
+        assertEquals(
+                1,
+                eval(tAnd(tInt(1), tInt(1)))
+        );
+    }
+
+    @Test
+    public void testLetX10() {
         assertEquals(
                 10,
-                eval(new Block(
-                        new LetExpression("x", new IntLiteral(10)),
-                        new Identifier("x")
+                eval(tBlock(
+                        tLet("x", tInt(10)),
+                        tId("x")
                 ))
         );
     }
 
     @Test
-    public void testAssignment() {
+    public void testAssignmentX20() {
         assertEquals(
                 20,
                 eval(new Block(
                         new LetExpression("x", new IntLiteral(10)),
                         new AssignmentExpression("x", new IntLiteral(20)),
-                        new Identifier("x")
+                        new Id("x")
                 ))
         );
     }
 
     @Test
-    public void testWhile() {
+    public void testWhileLt10() {
         assertEquals(
                 10,
                 eval(
-                        new Block(
-                                new LetExpression("x", new IntLiteral(0)),
-                                new WhileExpression(
-                                        new BinaryExpression("<", new Identifier("x"), new IntLiteral(10)),
-                                        new AssignmentExpression(
+                        tBlock(
+                                tLet("x", new IntLiteral(0)),
+                                tWhile(
+                                        tLt( new Id("x"), tInt(10)),
+                                        tAssign(
                                                 "x",
-                                                new BinaryExpression("+", new Identifier("x"), new IntLiteral(1))
+                                                tAdd(tId("x"), tInt(1))
                                         )
                                 ),
-                                new Identifier("x")
+                                tId("x")
                         )
                 )
         );
     }
 
     @Test
-    public void testIf() {
+    public void testIf1Lt2() {
         assertEquals(
                 "1 < 2",
                 eval(
-                        new IfExpression(
-                                new BinaryExpression("<", new IntLiteral(1), new IntLiteral(2)),
-                                Arrays.asList(new StringLiteral("1 < 2")),
-                                Arrays.asList(new StringLiteral("1 >= 2"))
+                        tIf(
+                                tLt(tInt(1), tInt(2)),
+                                tString("1  < 2"),
+                                tString("1 >= 2")
                         )
                 )
         );
