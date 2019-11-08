@@ -2,11 +2,14 @@ package com.github.kmizu.nub2;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import static com.github.kmizu.nub2.Ast.BinaryOperator.*;
 
 public class Ast {
     public interface ExpressionVisitor<E> {
         E visitBinaryExpression(BinaryExpression node);
-        E visitNumber(IntLiteral node);
+        E visitIntLiteral(IntLiteral node);
+        E visitBooleanLiteral(BooleanLiteral node);
         E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitId(Id node);
@@ -66,10 +69,13 @@ public class Ast {
 
     public static class LetExpression extends Expression {
         public final String variableName;
-        public final Ast.Expression expression;
-        public LetExpression(String variableName, Ast.Expression expression) {
+        public final Ast.Expression init;
+        public final Ast.Block body;
+
+        public LetExpression(String variableName, Ast.Expression init, Ast.Block body) {
             this.variableName = variableName;
-            this.expression = expression;
+            this.init = init;
+            this.body = new Ast.Block(Arrays.asList(body));
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitLetExpression(this); }
@@ -147,10 +153,23 @@ public class Ast {
         }
     }
 
+    public enum BinaryOperator {
+        ADD("+"), SUBTRACT("+"), MULTIPLY("*"), DIVIDE("/"),
+        LESS_THAN("<"), LESS_THAN_OR_EQUAL("<="), GREATER_THAN(">"), GREATER_THAN_OR_EQUAL(">="),
+        EQUAL("=="), NOT_EQUAL("!="), LOGICAL_AND("&&"), LOGCIAL_OR("||");
+        private String op;
+        public String getOp() {
+            return op;
+        }
+        private BinaryOperator(String name) {
+            this.op = op;
+        }
+    }
+
     public static class BinaryExpression extends Expression {
-        public final String operator;
+        public final BinaryOperator operator;
         public final Expression lhs, rhs;
-        public BinaryExpression(String operator, Expression lhs, Expression rhs) {
+        public BinaryExpression(BinaryOperator operator, Expression lhs, Expression rhs) {
             this.operator = operator;
             this.lhs = lhs;
             this.rhs = rhs;
@@ -168,7 +187,7 @@ public class Ast {
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) {
-            return visitor.visitNumber(this);
+            return visitor.visitIntLiteral(this);
         }
     }
 
@@ -179,6 +198,16 @@ public class Ast {
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitStringLiteral(this);
+        }
+    }
+
+    public static class BooleanLiteral extends Expression {
+        public final boolean value;
+        public BooleanLiteral(boolean value) { this.value = value; }
+
+        @Override
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitBooleanLiteral(this);
         }
     }
 
@@ -195,60 +224,83 @@ public class Ast {
     }
 
     public static class Factory {
+        /*
+         * Literals
+         */
         public static StringLiteral tString(String value) {
             return new StringLiteral(value);
         }
         public static IntLiteral tInt(int value) {
             return new IntLiteral(value);
         }
+        public static BooleanLiteral tBoolean(boolean value) {
+            return new BooleanLiteral(value);
+        }
+
         public static Id tId(String name) {
             return new Id(name);
         }
 
+        /*
+         * Println expression
+         */
         public static PrintlnExpression tPrintln(Expression target) {
             return new PrintlnExpression(target);
         }
+
+        /*
+         * Binary expressions
+         */
         public static BinaryExpression tAdd(Expression lhs, Expression rhs) {
-            return new BinaryExpression("+" ,lhs, rhs);
+            return new BinaryExpression(ADD ,lhs, rhs);
         }
         public static BinaryExpression tSubtract(Expression lhs, Expression rhs) {
-            return new BinaryExpression("-" ,lhs, rhs);
+            return new BinaryExpression(SUBTRACT ,lhs, rhs);
         }
         public static BinaryExpression tMultiply(Expression lhs, Expression rhs) {
-            return new BinaryExpression("*" ,lhs, rhs);
+            return new BinaryExpression(MULTIPLY ,lhs, rhs);
         }
         public static BinaryExpression tDivide(Expression lhs, Expression rhs) {
-            return new BinaryExpression("/" ,lhs, rhs);
+            return new BinaryExpression(DIVIDE ,lhs, rhs);
         }
         public static BinaryExpression tAnd(Expression lhs, Expression rhs) {
-            return new BinaryExpression("&&", lhs, rhs);
+            return new BinaryExpression(LOGICAL_AND, lhs, rhs);
         }
         public static BinaryExpression tOr(Expression lhs, Expression rhs) {
-            return new BinaryExpression("||", lhs, rhs);
+            return new BinaryExpression(LOGCIAL_OR, lhs, rhs);
         }
         public static BinaryExpression tLt(Expression lhs, Expression rhs) {
-            return new BinaryExpression("<", lhs, rhs);
+            return new BinaryExpression(LESS_THAN, lhs, rhs);
+        }
+        public static BinaryExpression tLte(Expression lhs, Expression rhs) {
+            return new BinaryExpression(LESS_THAN_OR_EQUAL, lhs, rhs);
         }
         public static BinaryExpression tGt(Expression lhs, Expression rhs) {
-            return new BinaryExpression(">", lhs, rhs);
+            return new BinaryExpression(GREATER_THAN, lhs, rhs);
         }
         public static BinaryExpression tGte(Expression lhs, Expression rhs) {
-            return new BinaryExpression(">=", lhs, rhs);
+            return new BinaryExpression(GREATER_THAN_OR_EQUAL, lhs, rhs);
         }
 
+        /*
+         * Assignment
+         */
         public static AssignmentExpression tAssign(String variableName, Expression newValue) {
             return new AssignmentExpression(variableName, newValue);
         }
 
         /*
-         * control structures
+         * Control structures
          */
-
         public static Block tBlock(Expression... elements) {
             return new Block(elements);
         }
-        public static LetExpression tLet(String variableName, Expression init) {
-            return new LetExpression(variableName, init);
+        public static LetExpression tLet(String variableName, Expression init, Block body) {
+            return new LetExpression(variableName, init, body);
+        }
+        public static LetExpression tLet(String variableName, Expression init, Function<String, Block> bodyFactory) {
+            Block body = bodyFactory.apply(variableName);
+            return tLet(variableName, init, body);
         }
         public static IfExpression tIf(Expression tCondition, Expression tThen, Expression tElse) {
             return new IfExpression(tCondition, new Block(tThen), new Block(tElse));

@@ -60,10 +60,66 @@ public class Nub2Test {
     }
 
     @Test
-    public void test1And1Is1() {
+    public void test1Lt2() {
         assertEquals(
-                1,
-                eval(tAnd(tInt(1), tInt(1)))
+                true,
+                eval(tLt(tInt(1), tInt(2)))
+        );
+    }
+
+    @Test
+    public void test2Lte2() {
+        assertEquals(
+                true,
+                eval(tLte(tInt(2), tInt(2)))
+        );
+    }
+
+    @Test
+    public void test2Gt1() {
+        assertEquals(
+                true,
+                eval(tGt(tInt(2), tInt(1)))
+        );
+    }
+
+    @Test
+    public void test2Gte2() {
+        assertEquals(
+                true,
+                eval(tGte(tInt(2), tInt(2)))
+        );
+    }
+
+    @Test
+    public void testTrueAndTrueIsTrue() {
+        assertEquals(
+                true,
+                eval(tAnd(tBoolean(true), tBoolean(true)))
+        );
+    }
+
+    @Test
+    public void testTrueAndFalseIsFalse() {
+        assertEquals(
+                false,
+                eval(tAnd(tBoolean(true), tBoolean(false)))
+        );
+    }
+
+    @Test
+    public void testTrueOrFalseIsTrue() {
+        assertEquals(
+                true,
+                eval(tOr(tBoolean(true), tBoolean(false)))
+        );
+    }
+
+    @Test
+    public void testFalseOrFalseIsFalse() {
+        assertEquals(
+                false,
+                eval(tOr(tBoolean(false), tBoolean(false)))
         );
     }
 
@@ -71,10 +127,14 @@ public class Nub2Test {
     public void testLetX10() {
         assertEquals(
                 10,
-                eval(tBlock(
-                        tLet("x", tInt(10)),
-                        tId("x")
-                ))
+                eval(
+                        tBlock(
+                                tLet(
+                                        "x", tInt(10),
+                                        x -> tBlock(tId(x))
+                                )
+                        )
+                )
         );
     }
 
@@ -82,11 +142,17 @@ public class Nub2Test {
     public void testAssignmentX20() {
         assertEquals(
                 20,
-                eval(new Block(
-                        new LetExpression("x", new IntLiteral(10)),
-                        new AssignmentExpression("x", new IntLiteral(20)),
-                        new Id("x")
-                ))
+                eval(
+                        tBlock(
+                                tLet(
+                                        "x", tInt(10),
+                                        x -> tBlock(
+                                                tAssign(x, tInt(20)),
+                                                tId(x)
+                                        )
+                                )
+                        )
+                )
         );
     }
 
@@ -96,12 +162,16 @@ public class Nub2Test {
                 10,
                 eval(
                         tBlock(
-                                tLet("x", new IntLiteral(0)),
-                                tWhile(
-                                        tLt( new Id("x"), tInt(10)),
-                                        tAssign(
-                                                "x",
-                                                tAdd(tId("x"), tInt(1))
+                                tLet(
+                                        "x", new IntLiteral(0),
+                                        x -> tBlock(
+                                                tWhile(
+                                                        tLt( new Id(x), tInt(10)),
+                                                        tAssign(
+                                                                x,
+                                                                tAdd(tId(x), tInt(1))
+                                                        )
+                                                )
                                         )
                                 ),
                                 tId("x")

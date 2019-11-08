@@ -1,5 +1,7 @@
 package com.github.kmizu.nub2;
 
+import com.sun.tools.doclint.Env;
+
 import java.util.*;
 
 public class Evaluator implements Ast.ExpressionVisitor<Object> {
@@ -39,7 +41,6 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     private Environment environment = new Environment(null);
-    private Environment globalEnvironment = environment;
     private Map<String, Ast.DefFunction> functions = new HashMap<>();
 
     private boolean asBoolean(Object value) {
@@ -52,7 +53,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
 
     public Object visitBinaryExpression(Ast.BinaryExpression node) {
         switch (node.operator) {
-            case "+":
+            case ADD:
                 Object lhs = node.lhs.accept(this);
                 Object rhs = node.rhs.accept(this);
                 if(lhs instanceof String || rhs instanceof String) {
@@ -60,35 +61,35 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
                 } else {
                     return asInt(lhs) + asInt(rhs);
                 }
-            case "-":
+            case SUBTRACT:
                 return asInt(node.lhs.accept(this)) - asInt(node.rhs.accept(this));
-            case "*":
+            case MULTIPLY:
                 return asInt(node.lhs.accept(this)) * asInt(node.rhs.accept(this));
-            case "/":
+            case DIVIDE:
                 return asInt(node.lhs.accept(this)) / asInt(node.rhs.accept(this));
-            case "<=":
-                return asInt((node.lhs.accept(this))) <= asInt(node.rhs.accept(this)) ? 1 : 0;
-            case ">=":
-                return (asInt(node.lhs.accept(this)) >= asInt(node.rhs.accept(this))) ? 1 : 0;
-            case "<":
-                return (asInt(node.lhs.accept(this)) < asInt(node.rhs.accept(this))) ? 1 : 0;
-            case ">":
-                return (asInt(node.lhs.accept(this)) > asInt(node.rhs.accept(this))) ? 1 : 0;
-            case "==":
-                return (node.lhs.accept(this).equals(node.rhs.accept(this))) ? 1 : 0;
-            case "!=":
-                return (!(node.lhs.accept(this).equals(node.rhs.accept(this)))) ? 1 : 0;
-            case "&&":
-                throw new NotImplementedException("logical and operator &&");
-            case "||":
-                throw new NotImplementedException("logical or operator ||");
+            case LESS_THAN_OR_EQUAL:
+                return asInt((node.lhs.accept(this))) <= asInt(node.rhs.accept(this));
+            case GREATER_THAN_OR_EQUAL:
+                return asInt(node.lhs.accept(this)) >= asInt(node.rhs.accept(this));
+            case LESS_THAN:
+                return asInt(node.lhs.accept(this)) < asInt(node.rhs.accept(this));
+            case GREATER_THAN:
+                return asInt(node.lhs.accept(this)) > asInt(node.rhs.accept(this));
+            case EQUAL:
+                return node.lhs.accept(this).equals(node.rhs.accept(this));
+            case NOT_EQUAL:
+                return !(node.lhs.accept(this).equals(node.rhs.accept(this)));
+            case LOGICAL_AND:
+                throw new NotImplementedException("logical and operator " + node.operator.getOp());
+            case LOGCIAL_OR:
+                throw new NotImplementedException("logical or operator " + node.operator.getOp());
             default:
                 throw new RuntimeException("cannot reach here");
         }
     }
 
     @Override
-    public Integer visitNumber(Ast.IntLiteral node) {
+    public Integer visitIntLiteral(Ast.IntLiteral node) {
         return node.value;
     }
 
@@ -98,18 +99,22 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitLetExpression(Ast.LetExpression node) {
-        Object value = node.expression.accept(this);
-        if(environment.contains(node.variableName)) {
-            throw new NubRuntimeException("variable " + node.variableName + " is already defined");
-        }
-        environment.register(node.variableName, value);
-        return value;
+    public Object visitBooleanLiteral(Ast.BooleanLiteral node) {
+        return node.value;
     }
 
     @Override
-    public Object visitAssignmentExpression(Ast.AssignmentExpression node) {
-        throw new NotImplementedException("assignment");
+    public Object visitLetExpression(Ast.LetExpression node) {
+        Object value = node.init.accept(this);
+        if(environment.contains(node.variableName)) {
+            throw new NubRuntimeException("variable " + node.variableName + " is already defined");
+        }
+        Environment backup = environment;
+        this.environment = new Environment(environment);
+        environment.register(node.variableName, value);
+        node.body.accept(this);
+        this.environment = backup;
+        return value;
     }
 
     @Override
@@ -129,8 +134,18 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitWhileExpression(Ast.WhileExpression node) {
-        throw new NotImplementedException("while expression");
+    public Object visitId(Ast.Id node) {
+        Object ret = environment.find(node.name);
+        if (ret == null)
+            throw new NubRuntimeException(node.name + " is not defined");
+        else
+            return ret;
+    }
+
+    @Override
+    public Object visitDefFunction(Ast.DefFunction node) {
+        // Nothing to be done
+        return null;
     }
 
     @Override
@@ -139,17 +154,18 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitDefFunction(Ast.DefFunction node) {
-        return null;
+    public Object visitWhileExpression(Ast.WhileExpression node) {
+        throw new NotImplementedException("while expression");
     }
 
     @Override
-    public Object visitId(Ast.Id node) {
-        Object ret = environment.find(node.name);
-        if (ret == null)
-            throw new NubRuntimeException(node.name + " is not defined");
-        else
-            return ret;
+    public Object visitAssignmentExpression(Ast.AssignmentExpression node) {
+        throw new NotImplementedException("assignment");
+    }
+
+    @Override
+    public Object visitFunctionCall(Ast.FunctionCall node) {
+        throw new NotImplementedException("function call");
     }
 
     public Object eval(Ast.Block program) {
@@ -160,10 +176,5 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
             }
         }
         return program.accept(this);
-    }
-
-    @Override
-    public Object visitFunctionCall(Ast.FunctionCall node) {
-        throw new NotImplementedException("function call");
     }
 }
