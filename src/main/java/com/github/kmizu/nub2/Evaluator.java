@@ -1,7 +1,5 @@
 package com.github.kmizu.nub2;
 
-import com.sun.tools.doclint.Env;
-
 import java.util.*;
 
 public class Evaluator implements Ast.ExpressionVisitor<Object> {
@@ -169,7 +167,12 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     public Object eval(Ast.Block program) {
-        for(Ast.Expression top:program.expressions) {
+        Ast.Block target = program;
+        VariableChecker checker = new VariableChecker();
+        target = checker.checkVariable(program);
+        Typer typer = new Typer();
+        target = typer.typeCheck(target);
+        for(Ast.Expression top:target.expressions) {
             if(top instanceof Ast.DefFunction) {
                 Ast.DefFunction f = (Ast.DefFunction)top;
                 functions.put(f.name, f);
