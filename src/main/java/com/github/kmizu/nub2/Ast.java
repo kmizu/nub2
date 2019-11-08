@@ -48,20 +48,11 @@ public class Ast {
     public static class DefFunction extends Expression {
         public final String                   name;
         public final List<String>             args;
-        public List<Ast.Expression> body;
-        public DefFunction(String name, List<String> args, List<Ast.Expression> body) {
+        public final Block body;
+        public DefFunction(String name, List<String> args, Block body) {
             this.name = name;
             this.args = args;
             this.body = body;
-        }
-        public String name() {
-            return name;
-        }
-        public List<String> args() {
-            return args;
-        }
-        public List<Ast.Expression> body() {
-            return body;
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitDefFunction(this); }
@@ -313,6 +304,13 @@ public class Ast {
         }
         public static WhileExpression tWhile(Expression tCondition, Expression... tBody) {
             return new WhileExpression(tCondition, tBody);
+        }
+
+        /*
+         * Function definitions
+         */
+        public static DefFunction tDef(String name, List<String> args, Block body) {
+            return new DefFunction(name, args, body);
         }
     }
 }

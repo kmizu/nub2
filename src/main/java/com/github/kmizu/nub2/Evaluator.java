@@ -172,7 +172,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
         for(Ast.Expression top:program.expressions) {
             if(top instanceof Ast.DefFunction) {
                 Ast.DefFunction f = (Ast.DefFunction)top;
-                functions.put(f.name(), f);
+                functions.put(f.name, f);
             }
         }
         return program.accept(this);
