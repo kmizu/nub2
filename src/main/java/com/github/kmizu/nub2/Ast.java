@@ -281,6 +281,12 @@ public class Ast {
         public static BinaryExpression tGte(Expression lhs, Expression rhs) {
             return new BinaryExpression(GREATER_THAN_OR_EQUAL, lhs, rhs);
         }
+        public static BinaryExpression tEqual(Expression lhs, Expression rhs) {
+            return new BinaryExpression(EQUAL, lhs, rhs);
+        }
+        public static BinaryExpression tNotEqual(Expression lhs, Expression rhs) {
+            return new BinaryExpression(NOT_EQUAL, lhs, rhs);
+        }
 
         /*
          * Assignment
