@@ -146,7 +146,7 @@ public class Ast {
         public String getOp() {
             return op;
         }
-        private BinaryOperator(String name) {
+        private BinaryOperator(String op) {
             this.op = op;
         }
     }

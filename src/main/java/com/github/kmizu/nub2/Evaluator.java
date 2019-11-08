@@ -70,19 +70,19 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
             case LESS_THAN_OR_EQUAL:
                 return asInt((node.lhs.accept(this))) <= asInt(node.rhs.accept(this));
             case GREATER_THAN_OR_EQUAL:
-                return asInt(node.lhs.accept(this)) >= asInt(node.rhs.accept(this));
+                throw new NotImplementedException("comparing operator " + node.operator.getOp());
             case LESS_THAN:
-                return asInt(node.lhs.accept(this)) < asInt(node.rhs.accept(this));
+                return asInt((node.lhs.accept(this))) < asInt(node.rhs.accept(this));
             case GREATER_THAN:
-                return asInt(node.lhs.accept(this)) > asInt(node.rhs.accept(this));
+                throw new NotImplementedException("comparing operator " + node.operator.getOp());
             case EQUAL:
                 return node.lhs.accept(this).equals(node.rhs.accept(this));
             case NOT_EQUAL:
-                return !(node.lhs.accept(this).equals(node.rhs.accept(this)));
+                throw new NotImplementedException("equality operator " + node.operator.getOp());
             case LOGICAL_AND:
-                throw new NotImplementedException("logical and operator " + node.operator.getOp());
+                throw new NotImplementedException("logical operator " + node.operator.getOp());
             case LOGCIAL_OR:
-                throw new NotImplementedException("logical or operator " + node.operator.getOp());
+                throw new NotImplementedException("logical operator " + node.operator.getOp());
             default:
                 throw new RuntimeException("cannot reach here");
         }
