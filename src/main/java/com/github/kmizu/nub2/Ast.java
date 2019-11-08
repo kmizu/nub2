@@ -313,5 +313,8 @@ public class Ast {
         public static FunctionCall tCall(String name, List<Expression> parameters) {
             return new FunctionCall(name, parameters);
         }
+        public static FunctionCall tCall(String name, Expression... parameters) {
+            return new FunctionCall(name, Arrays.asList(parameters));
+        }
     }
 }
