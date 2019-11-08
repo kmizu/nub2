@@ -50,7 +50,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
         return ((Integer)value).intValue();
     }
 
-    public Object visitBinaryOperation(Ast.BinaryOperation node) {
+    public Object visitBinaryExpression(Ast.BinaryExpression node) {
         switch (node.operator()) {
             case "+":
                 Object lhs = node.lhs().accept(this);
@@ -108,7 +108,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitAssignmentOperation(Ast.AssignmentOperation node) {
+    public Object visitAssignmentExpression(Ast.AssignmentExpression node) {
         throw new UnimplementedException("assignment");
     }
 
@@ -120,7 +120,7 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
     }
 
     @Override
-    public Object visitExpressionList(Ast.Block node) {
+    public Object visitBlock(Ast.Block node) {
         Object last = 0;
         for (Ast.Expression e : node.expressions()) {
             last = e.accept(this);

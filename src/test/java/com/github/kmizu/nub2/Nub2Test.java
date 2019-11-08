@@ -10,7 +10,7 @@ import java.util.Arrays;
 import static com.github.kmizu.nub2.Ast.*;
 
 @RunWith(JUnit4.class)
-public class NubTest {
+public class Nub2Test {
     private static Object eval(Expression input) {
         return new Evaluator().evaluate(
                 new Block(
@@ -36,7 +36,7 @@ public class NubTest {
     public void test1Plus1() {
         assertEquals(
                 2,
-                eval(new BinaryOperation("+", new IntLiteral(1), new IntLiteral(1)))
+                eval(new BinaryExpression("+", new IntLiteral(1), new IntLiteral(1)))
         );
     }
 
@@ -44,7 +44,7 @@ public class NubTest {
     public void test1Minus1() {
         assertEquals(
                 0,
-                eval(new BinaryOperation("-", new IntLiteral(1), new IntLiteral(1)))
+                eval(new BinaryExpression("-", new IntLiteral(1), new IntLiteral(1)))
         );
     }
 
@@ -52,7 +52,7 @@ public class NubTest {
     public void test2Mul2() {
         assertEquals(
                 4,
-                eval(new BinaryOperation("*", new IntLiteral(2), new IntLiteral(2)))
+                eval(new BinaryExpression("*", new IntLiteral(2), new IntLiteral(2)))
         );
     }
 
@@ -60,7 +60,7 @@ public class NubTest {
     public void test6Div2() {
         assertEquals(
                 3,
-                eval(new BinaryOperation("/", new IntLiteral(6), new IntLiteral(2)))
+                eval(new BinaryExpression("/", new IntLiteral(6), new IntLiteral(2)))
         );
     }
 
@@ -81,7 +81,7 @@ public class NubTest {
                 20,
                 eval(new Block(
                         new LetExpression("x", new IntLiteral(10)),
-                        new AssignmentOperation("x", new IntLiteral(20)),
+                        new AssignmentExpression("x", new IntLiteral(20)),
                         new Identifier("x")
                 ))
         );
@@ -95,10 +95,10 @@ public class NubTest {
                         new Block(
                                 new LetExpression("x", new IntLiteral(0)),
                                 new WhileExpression(
-                                        new BinaryOperation("<", new Identifier("x"), new IntLiteral(10)),
-                                        new AssignmentOperation(
+                                        new BinaryExpression("<", new Identifier("x"), new IntLiteral(10)),
+                                        new AssignmentExpression(
                                                 "x",
-                                                new BinaryOperation("+", new Identifier("x"), new IntLiteral(1))
+                                                new BinaryExpression("+", new Identifier("x"), new IntLiteral(1))
                                         )
                                 ),
                                 new Identifier("x")
@@ -113,7 +113,7 @@ public class NubTest {
                 "1 < 2",
                 eval(
                         new IfExpression(
-                                new BinaryOperation("<", new IntLiteral(1), new IntLiteral(2)),
+                                new BinaryExpression("<", new IntLiteral(1), new IntLiteral(2)),
                                 Arrays.asList(new StringLiteral("1 < 2")),
                                 Arrays.asList(new StringLiteral("1 >= 2"))
                         )

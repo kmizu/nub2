@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Ast {
     public interface ExpressionVisitor<E> {
-        E visitBinaryOperation(BinaryOperation node);
+        E visitBinaryExpression(BinaryExpression node);
         E visitNumber(IntLiteral node);
         E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
         E visitIdentifier(Identifier node);
-        E visitExpressionList(Block node);
+        E visitBlock(Block node);
         E visitIfExpression(IfExpression node);
         E visitWhileExpression(WhileExpression node);
-        E visitAssignmentOperation(AssignmentOperation node);
+        E visitAssignmentExpression(AssignmentExpression node);
         E visitPrintlnExpression(PrintlnExpression node);
         E visitDefFunction(DefFunction node);
         E visitFunctionCall(FunctionCall node);
@@ -81,10 +81,10 @@ public class Ast {
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitLetExpression(this); }
     }
 
-    public static class AssignmentOperation extends Expression {
+    public static class AssignmentExpression extends Expression {
         private final String variableName;
         private final Ast.Expression expression;
-        public AssignmentOperation(String variableName, Ast.Expression expression) {
+        public AssignmentExpression(String variableName, Ast.Expression expression) {
             this.variableName = variableName;
             this.expression = expression;
         }
@@ -95,7 +95,7 @@ public class Ast {
             return expression;
         }
 
-        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitAssignmentOperation(this); }
+        public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitAssignmentExpression(this); }
     }
 
     public static class IfExpression extends Expression {
@@ -181,14 +181,14 @@ public class Ast {
 
         @Override
         public <E> E accept(ExpressionVisitor<E> visitor) {
-            return visitor.visitExpressionList(this);
+            return visitor.visitBlock(this);
         }
     }
 
-    public static class BinaryOperation extends Expression {
+    public static class BinaryExpression extends Expression {
         private final String operator;
         private final Expression lhs, rhs;
-        public BinaryOperation(String operator, Expression lhs, Expression rhs) {
+        public BinaryExpression(String operator, Expression lhs, Expression rhs) {
             this.operator = operator;
             this.lhs = lhs;
             this.rhs = rhs;
@@ -198,7 +198,7 @@ public class Ast {
         public Expression rhs() { return rhs; }
 
         public <E> E accept(ExpressionVisitor<E> visitor) {
-            return visitor.visitBinaryOperation(this);
+            return visitor.visitBinaryExpression(this);
         }
     }
 
@@ -247,8 +247,8 @@ public class Ast {
             return new FunctionCall(functionName, Arrays.asList(parameters));
         }
 
-        public static AssignmentOperation makeAssignment(String varialeName, Expression expression) {
-            return new AssignmentOperation(varialeName, expression);
+        public static AssignmentExpression makeAssignment(String varialeName, Expression expression) {
+            return new AssignmentExpression(varialeName, expression);
         }
 
         public static LetExpression makeLet(String variableName, Expression expression) {
@@ -258,10 +258,10 @@ public class Ast {
         public static IfExpression makeIf(Expression condition, Expression thenClause, Expression elseClause) {
             return new IfExpression(condition, Arrays.asList(thenClause), Arrays.asList(elseClause));
         }
-        public static BinaryOperation makeBinaryOperation(
+        public static BinaryExpression makeBinaryOperation(
                 String op, Expression lhs, Expression rhs
         ) {
-            return new BinaryOperation(op, lhs, rhs);
+            return new BinaryExpression(op, lhs, rhs);
         }
 
         public static WhileExpression makeWhile(
