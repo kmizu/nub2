@@ -29,17 +29,11 @@ public class Ast {
     }
 
     public static class FunctionCall extends Expression {
-        public final Id name;
+        public final String name;
         public final List<Ast.Expression> params;
-        public FunctionCall(Id name, List<Ast.Expression> params) {
+        public FunctionCall(String name, List<Ast.Expression> params) {
             this.name = name;
             this.params = params;
-        }
-        public Id name() {
-            return name;
-        }
-        public List<Ast.Expression> params() {
-            return params;
         }
 
         public <E> E accept(ExpressionVisitor<E> visitor) { return visitor.visitFunctionCall(this); }
@@ -311,6 +305,13 @@ public class Ast {
          */
         public static DefFunction tDef(String name, List<String> args, Block body) {
             return new DefFunction(name, args, body);
+        }
+
+        /*
+         * Function invocations
+         */
+        public static FunctionCall tCall(String name, List<Expression> parameters) {
+            return new FunctionCall(name, parameters);
         }
     }
 }
