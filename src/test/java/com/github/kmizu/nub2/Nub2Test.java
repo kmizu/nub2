@@ -3,6 +3,10 @@ package com.github.kmizu.nub2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Arrays;
+
+import static com.github.kmizu.nub2.Collections.listOf;
 import static org.junit.Assert.*;
 import static com.github.kmizu.nub2.Ast.Factory.*;
 import static com.github.kmizu.nub2.Ast.*;
@@ -189,6 +193,22 @@ public class Nub2Test {
                                 tLt(tInt(1), tInt(2)),
                                 tString("1  < 2"),
                                 tString("1 >= 2")
+                        )
+                )
+        );
+    }
+
+    @Test
+    public void testUserDefinedAddFuntion() {
+        assertEquals(
+                3,
+                eval(
+                        tBlock(
+                                tDef(
+                                        "add", listOf("x", "y"),
+                                        tBlock(tAdd(tId("x"), tId("y")))
+                                ),
+                                tCall("add", tInt(1), tInt(2))
                         )
                 )
         );
