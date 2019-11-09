@@ -175,10 +175,10 @@ public class Nub2Test {
                                                                 x,
                                                                 tAdd(tId(x), tInt(1))
                                                         )
-                                                )
+                                                ),
+                                                tId("x")
                                         )
-                                ),
-                                tId("x")
+                                )
                         )
                 )
         );
