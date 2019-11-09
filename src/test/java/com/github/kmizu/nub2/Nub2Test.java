@@ -13,13 +13,7 @@ import static com.github.kmizu.nub2.Ast.*;
 
 
 @RunWith(JUnit4.class)
-public class Nub2Test {
-    private static Object eval(Expression input) {
-        return new Evaluator().eval(new Block(input));
-    }
-    private static Object eval(Block input) {
-        return new Evaluator().eval(input);
-    }
+public class Nub2Test extends AbstractNub2Test {
 
     @Test
     public void testStringLiteral() {
@@ -213,7 +207,7 @@ public class Nub2Test {
                                         Type.INT,
                                         tBlock(tAdd(tId("x"), tId("y")))
                                 ),
-                                tCall("add", tString("FOO"), tInt(2))
+                                tCall("add", tInt(1), tInt(2))
                         )
                 )
         );
