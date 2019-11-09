@@ -110,9 +110,9 @@ public class Evaluator implements Ast.ExpressionVisitor<Object> {
         Environment backup = environment;
         this.environment = new Environment(environment);
         environment.register(node.variableName, value);
-        node.body.accept(this);
+        Object result = node.body.accept(this);
         this.environment = backup;
-        return value;
+        return result;
     }
 
     @Override
